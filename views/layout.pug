@@ -1,0 +1,190 @@
+doctype html
+html(lang='en')
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+    script(src='/jquery/jquery.min.js')
+    script(src='/bootstrap/js/bootstrap.min.js')
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    .container
+        .row
+            nav.col.navbar.navbar-expand-lg.navbar-light.bg-light
+                a.navbar-brand(href="/") BoOkMs
+                button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+                    span.navbar-toggler-icon
+                #navbarSupportedContent.collapse.navbar-collapse
+                    ul.navbar-nav.mr-auto
+                        li.nav-item.active
+                            a.nav-link(href="/")
+                                | Home 
+                    .my-2.my-lg-0
+                        .btn-group
+                            if user === undefined
+                                button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target="#loginModal") 登录
+                                button.btn.btn-outline-secondary(type="button" data-toggle="modal" data-target="#registerModal") 注册
+                            else
+                                a.btn.btn-outline-primary(herf="#")= user.name
+                                if user.class === 'user' || user.class === 'admin'
+                                    button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalBorrow' id="btnShowBorrow")
+                                        i.fas.fa-book
+                                if user.class === 'admin'
+                                    button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalPending' id="btnShowPending")
+                                        i.fas.fa-tasks
+                                    button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalNewBook' id="btnShowNewBook")
+                                        i.fas.fa-plus-square
+        if user === undefined
+            #loginModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true")
+                .modal-dialog.modal-dialog-centered(role="document")
+                    .modal-content
+                        form(action="/user/login" method='POST')
+                            .modal-header
+                                h5#loginModalLabel.modal-title 
+                                button.close(type="button" data-dismiss="modal" aria-label="Close")
+                                    span(aria-hidden="true") ×
+                            .modal-body
+                                .form-group
+                                    label User name
+                                    input.form-control(type="text", name="username" required minlength="3" maxlength="10")
+                                .form-group
+                                    label Password
+                                    input.form-control(type="password", name="password" required minlength="8" maxlength="20")
+                            .modal-footer
+                                input.btn.btn-primary(type="submit" value="登录") 
+
+            #registerModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true")
+                .modal-dialog.modal-dialog-centered(role="document")
+                    .modal-content
+                        form(action="/user/register" method='POST')
+                            .modal-header   
+                                h5#registerModalLabel.modal-title 注册
+                                button.close(type="button" data-dismiss="modal" aria-label="Close")
+                                    span(aria-hidden="true") ×
+                            .modal-body
+                                
+                                .form-group
+                                    label Email address
+                                    input.form-control(type="email", name="email" required)
+                                .form-group
+                                    label User name
+                                    input.form-control(type="text", name="username" required minlength="3" maxlength="10")
+                                .form-group
+                                    label Password
+                                    input.form-control(type="password", name="password" required minlength="8" maxlength="20")
+                            .modal-footer
+                                input.btn.btn-primary(type="submit" value="注册")
+        else
+            if user.class === 'user' || user.class === 'admin'
+                .modal.fade#modalBorrow(tabindex="-1" role="dialog")
+                    .modal-dialog.modal-xl(role="document")
+                        .modal-content
+                            .modal-header
+                                h5 借阅
+                            .modal-body
+                                table.table
+                                    thead
+                                        tr
+                                            th(scope="col") 书名
+                                            th(scope="col") 借书日期
+                                            th(scope="col") 应还日期
+                                            th(scope="col") 状态
+                                            th(scope="col") *
+                                    tbody
+
+                            .modal-footer
+                                button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+            if user.class === 'admin'
+                .modal.fade#modalPending(tabindex="-1" role="dialog")
+                    .modal-dialog.modal-xl(role="document")
+                        .modal-content
+                            .modal-header
+                                h5 待处理
+                            .modal-body
+                                table.table
+                                    thead
+                                        tr                                            
+                                            th(scope="col") 用户名
+                                            th(scope="col") 书名
+                                            th(scope="col") 借书日期
+                                            th(scope="col") 应还日期
+                                            th(scope="col") 状态
+                                            th(scope="col") *
+                                    tbody
+
+                            .modal-footer
+                                button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+                .modal.fade#modalNewBook(tabindex="-1" role="dialog")
+                    .modal-dialog.modal-xl(role="document")
+                        .modal-content
+                            .modal-header
+                                h5 新建
+                            .modal-body
+                                form#formNewBook(encType="multipart/form-data" method="post" name="bookinfo")
+                                    .form-group
+                                        label(for="titleControlInput") 标题
+                                        input#titleControlInput.form-control(required autocomplete="off" type="text" name="title")
+                                    .form-group
+                                        label Author
+                                        .d-flex
+                                            #selectedAuthors.flex-grow-1
+                                                //- span.badge.badge-info.mr-1 Richard
+                                                //- span.badge.badge-info.mr-1 text
+                                                //- span.badge.badge-info.mr-1 text
+                                            .dropdown
+                                                .input-group(style="width:auto")
+                                                    input#inputSearchAuthor(type="search" autocomplete="off" placeholder="Pick Authuor")
+                                                    .input-group-append
+                                                        button#btnAddAuthor.btn.btn-outline-secondary(type="button" style="padding:0 7px;")
+                                                            i.fas.fa-plus-square
+                                                .dropdown-content#dropdownAuthorHint
+                                                    //- .dropdown-item testtest
+                                                    //- .dropdown-item testtest
+                                                    //- .dropdown-item testtest
+                                    .form-group
+                                        label Tags
+                                            button.pr-0.btn.badge.badge-secondary(type="button" data-toggle="collapse" data-target="#newBookTags")
+                                                span.p-0(style="writing-mode: vertical-lr;") »
+                                        .collapse#newBookTags
+                                            div(style="flex-direction:row; flex-wrap:wrap;")
+                                                each tag in tags
+                                                    button.tag.btn.badge.badge-pill.badge-primary(type="button" data-toggle="button" id="newbook_tag_"+tag.tid)= tag.name
+                                    .form-group
+                                        label(for="pubControlInput") 出版社
+                                        input#pubControlInput.form-control(autocomplete="off" type="text" name="publisher")
+                                    .form-group
+                                        label(for="isbnControlInput") ISBN
+                                        input#isbnControlInput.form-control(required autocomplete="off" type="text" name="isbn")
+                                    .from-group
+                                        label(for="yearInput") 出版年
+                                        input#yearInput.form-control(required type="number" name="year")
+                                    .from-group    
+                                        label(for="pagesControlInput") 页数
+                                        input#pagesControlInput.form-control(required type="number" name="page")
+                                    .from-group    
+                                        label 总数
+                                        input.form-control(required type="number" name="total")
+                                    .form-group
+                                        label(for="introControlTextarea") 简介
+                                        textarea#introControlTextarea.form-control(rows="3" name="intro")
+                                    #newBookErrMsg
+                                    .form-group#fgflex
+                                        a(class="btn btn-primary" data-toggle="collapse" href="#uploadCover" role="button" aria-expanded="false" aria-controls="collapseExample") 上传封面
+
+                                        input#newBookSubmit.btn.btn-primary(type="submit" value="提交")
+
+                                    div#uploadCover(class="collapse")
+                                        div
+                                            .form-group.mt-1
+                                                label(for="coverFile" style="display:none;") 封面
+                                                input#coverFile.form-control-file.filestyle(type="file" style="width:15rem;" name="cover" accept="image/png;image/jpg")
+                                            span.mr-5.mt-2 OR
+                                            .form-group
+                                                label(for="coverUrl" style="display:none") url
+                                                input#coverUrl.form-control(type="text" name="coverUrl" placeholder="URL")
+
+                            .modal-footer
+                                button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+        block content

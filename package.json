@@ -1,0 +1,32 @@
+{
+  "name": "booksrv",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "devstart": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "async": "^3.2.0",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.5.2",
+    "buffer": "^5.6.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "express-fileupload": "^1.2.0",
+    "express-session": "^1.17.1",
+    "express-validator": "^6.6.1",
+    "http-errors": "~1.6.3",
+    "isbn3": "^1.1.5",
+    "jquery": "^3.5.1",
+    "morgan": "~1.9.1",
+    "multer": "^1.4.2",
+    "pg-promise": "^10.6.1",
+    "popper.js": "^1.16.1",
+    "pug": "^3.0.0"
+  }
+}
