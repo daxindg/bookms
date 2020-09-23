@@ -54,7 +54,7 @@ router.post('/borrow/accept/:brid/', isAdmin, (req, res) => {
 
 router.post('/borrow/:bid/',isLogined, (req, res) => {
 
-    req.session.dbconn.any(`INSERT INTO borrow VALUES($1, $2, default, null, 'pending_borrow', default) RETURNING *`, [req.session.user.uid, req.params.bid])
+    req.session.dbconn.any(`INSERT INTO borrow(uid, bid, stime, ddl, status, brid) VALUES($1, $2, default, null, 'pending_borrow', default) RETURNING *`, [req.session.user.uid, req.params.bid])
     .then(
         data => {
             res.send({ok:true, data: data});

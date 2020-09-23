@@ -25,12 +25,12 @@ router.post('/login',[
             )
             .catch(err => {
                 console.log('/router/user.js:23', err);
-                res.end();
+                res.redirect('/');
             })
         }
         else {
             console.log(errors.array());
-            res.end();
+            res.redirect('/');
         }
         
     }
