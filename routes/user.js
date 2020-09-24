@@ -19,8 +19,9 @@ router.post('/login',[
                         req.session.user = data;
                         delete req.session.user.psw;
                         console.log(req.session.user);
-                        res.redirect('/');
+                        
                     }
+                    res.redirect('/');
                 }
             )
             .catch(err => {
@@ -61,4 +62,8 @@ router.post('/register', [
     }
 ]);
 
+router.post('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+})
 module.exports = router;

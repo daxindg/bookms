@@ -29,6 +29,8 @@ html(lang='en')
                             else
                                 a.btn.btn-outline-primary(herf="#")= user.name
                                 if user.class === 'user' || user.class === 'admin'
+                                    button.btn.btn-outline-primary(type="button" onclick="fetch('/user/logout', {method:'POST'}).then(()=>{window.location.reload();})")
+                                        i.fas.fa-sign-out-alt
                                     button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalBorrow' id="btnShowBorrow")
                                         i.fas.fa-book
                                 if user.class === 'admin'
@@ -36,6 +38,7 @@ html(lang='en')
                                         i.fas.fa-tasks
                                     button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalNewBook' id="btnShowNewBook")
                                         i.fas.fa-plus-square
+                                    
         if user === undefined
             #loginModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true")
                 .modal-dialog.modal-dialog-centered(role="document")

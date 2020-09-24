@@ -189,7 +189,7 @@ router.get('/author/get/:bid/', (req, res) => {
     })
 })
 
-router.post('/author/del/:bid/:aid/', (req, res) => {
+router.post('/author/del/:bid/:aid/',isAdmin, (req, res) => {
     req.session.dbconn.none('DELETE FROM book_author WHERE bid = $1 AND aid = $2', [req.params.bid, req.params.aid])
     .then( () => {
         res.send({ok:true});
