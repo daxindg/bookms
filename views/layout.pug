@@ -38,6 +38,8 @@ html(lang='en')
                                         i.fas.fa-tasks
                                     button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalNewBook' id="btnShowNewBook")
                                         i.fas.fa-plus-square
+                                    button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalUsers' id="btnShowUsers")
+                                        i.fas.fa-users
                                     
         if user === undefined
             #loginModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true")
@@ -114,6 +116,24 @@ html(lang='en')
                                             th(scope="col") 借书日期
                                             th(scope="col") 应还日期
                                             th(scope="col") 状态
+                                            th(scope="col") *
+                                    tbody
+
+                            .modal-footer
+                                button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+                .modal.fade#modalUsers(tabindex="-1" role="dialog")
+                    .modal-dialog.modal-xl(role="document")
+                        .modal-content
+                            .modal-header
+                                h5 用户
+                            .modal-body
+                                table.table
+                                    thead
+                                        tr                                            
+                                            th(scope="col") uid
+                                            th(scope="col") 用户名
+                                            th(scope="col") email
+                                            th(scope="col") 权限
                                             th(scope="col") *
                                     tbody
 

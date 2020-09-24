@@ -138,6 +138,29 @@ router.post('/book/new', isAdmin, [
     }
 ]);
 
+router.post('/book/:bid/set', isAdmin, [
+    body('title', '书名不可为空').optional().isLength({ min: 1 }).trim().escape(),
+    body('isbn', 'ISBN 为空或不合法').optional().isISBN().trim().escape().customSanitizer(value => value.split('-').join('')),
+    body('year', '出版年...这核里吗').optional().isInt({ min: 1000, max: (new Date()).getFullYear() }),
+    body('page', '页数...这河里妈').optional().isInt({ min: 1, max: Number.MAX_SAFE_INTEGER}),
+    body('intro', '简介不多于500字').optional().isLength({ max: 500}).trim().escape(),
+    (req, res) => {
+        const err = validationResult(req);
+        if (!err.isEmpty()) {
+            return res.send({ok:false, msg:err.array()[0].msg});
+        }
+        console.log(typeof(req.body));
+        for (const [k, v] of Object.entries(req.body)) {
+            console.log(k, v);
+            req.session.dbconn.any(`UPDATE book SET ${k} = $1 WHERE bid = $2`, [v, req.params.bid]).then(d => res.send({ok:true, msg: 'ok'}))
+            .catch(e => {
+                console.log(e);
+                res.send({ok: false, msg: e});
+            });
+        }
+    }
+]);
+
 router.post('/book/del/:bid/', isAdmin, (req, res) => {
     req.session.dbconn.none('DELETE FROM book WHERE bid=$1', req.params.bid)
     .then( () => res.send({ok:true}) )
@@ -204,7 +227,16 @@ router.post('/author/del/:bid/:aid/',isAdmin, (req, res) => {
 
 
 
+// user ma
 
+router.get('/user/list', isAdmin, (req, res) => {
+    req.session.dbconn.any(`SELECT uid, name, email, class FROM users`)
+    .then( data => res.send({ok:true, data:data}))
+    .catch( err => {
+        console.log(err);
+        res.send({ok:false, err:err});
+    })
+});
 
 
 

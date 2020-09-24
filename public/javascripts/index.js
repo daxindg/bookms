@@ -48,7 +48,7 @@ for (var i = 0; i < enchkbox.length; i++) {
             // console.log(k, id, x.value);
             var data = new FormData();
             data.append(k, x.value);
-            fetch(`/book/${id}/set`, {
+            fetch(`/api/book/${id}/set`, {
                 method: 'POST',
                 body: data
             }).then(res => res.json())
@@ -516,9 +516,41 @@ btnAddAuthor.onclick = btnAddAuthor_f.onclick = (e) => {
     }
 };
 
+
+// users list
+const btnShowUsers = document.getElementById('btnShowUsers');
+
+btnShowUsers.onclick = (e) => {
+    fetch('/api/user/list', {
+        method:'GET'
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.ok) {
+            var usersModalBody = document.querySelector('#modalUsers tbody');
+            while (usersModalBody.firstChild) {
+                usersModalBody.lastChild.remove();
+            }
+            for (let x of res.data) {
+                usersModalBody.appendChild(htmlToElement(`
+                <tr>
+                    <td>${x.uid}</td>
+                    <td>${x.name}</td>
+                    <td>${x.email}</td>
+                    <td><span class="badge badge-info">${x.class}</span></td>                    
+                </tr>
+                `));
+            }
+        }
+    })
+}
+
+
+
 function htmlToElement(html) {
     var template = document.createElement('template');
     html = html.trim(); // Never return a text node of whitespace as the result
     template.innerHTML = html;
     return template.content.firstChild;
 }
+
