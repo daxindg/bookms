@@ -45,7 +45,7 @@ app.use((req, res, next) => {
     if (!req.session.user) {
         req.session.dbconn = dbconn.guestconn;
     }
-    else if (req.session.user.class === 'admin') {
+    else if (req.session.user.class === 'admin' || req.session.user.class === 'god') {
         req.session.dbconn = dbconn.adminconn;
     }
     else if (req.session.user.class === 'user') {

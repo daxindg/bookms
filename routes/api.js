@@ -238,11 +238,27 @@ router.get('/user/list', isAdmin, (req, res) => {
     })
 });
 
+router.get('/user', isLogined, (req, res) => {
+    req.session.dbconn.one(`SELECT * FROM userprofile WHERE uid = $1`, req.session.user.uid)
+    .then(data => res.send({ok:true, data:data}))
+    .catch(err => {
+        console.log(err);
+        res.send({ok:false, err:err});
+    })
+})
 
-
-
-
-
+router.post('/user/setclass/:uid/:class/', isAdmin, (req, res) => {
+    if (req.session.user.class !== 'god') {
+        res.send({ok:false, msg:'Permission denied'});
+        return;
+    }
+    req.session.dbconn.none(`UPDATE users SET class = $1 WHERE uid = $2`, [req.params.class, req.params.uid])
+    .then(data => res.send({ok:false}))
+    .catch(err => {
+        console.log(err);
+        res.send({ok:false, err:err});
+    })
+})
 
 
 function isLogined(req, res, next) {
@@ -254,7 +270,7 @@ function isLogined(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-    if (!req.session.user || req.session.user.class != 'admin') {
+    if (!req.session.user || (req.session.user.class !== 'admin' && req.session.user.class !== 'god')) {
         res.send({ok:false, msg: 'Permission denied'});
         return;
     }

@@ -27,13 +27,13 @@ html(lang='en')
                                 button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target="#loginModal") 登录
                                 button.btn.btn-outline-secondary(type="button" data-toggle="modal" data-target="#registerModal") 注册
                             else
-                                a.btn.btn-outline-primary(herf="#")= user.name
-                                if user.class === 'user' || user.class === 'admin'
+                                a.btn.btn-outline-primary(data-toggle="modal" data-target="#modalUserProfile" id="btnShowUserProfile")= user.name
+                                if user.class === 'user' || (user.class === 'admin'  || user.class === 'god')
                                     button.btn.btn-outline-primary(type="button" onclick="fetch('/user/logout', {method:'POST'}).then(()=>{window.location.reload();})")
                                         i.fas.fa-sign-out-alt
                                     button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalBorrow' id="btnShowBorrow")
                                         i.fas.fa-book
-                                if user.class === 'admin'
+                                if (user.class === 'admin'  || user.class === 'god')
                                     button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalPending' id="btnShowPending")
                                         i.fas.fa-tasks
                                     button.btn.btn-outline-primary(type="button" data-toggle="modal" data-target='#modalNewBook' id="btnShowNewBook")
@@ -82,7 +82,7 @@ html(lang='en')
                             .modal-footer
                                 input.btn.btn-primary(type="submit" value="注册")
         else
-            if user.class === 'user' || user.class === 'admin'
+            if user.class === 'user' || (user.class === 'admin'  || user.class === 'god')
                 .modal.fade#modalBorrow(tabindex="-1" role="dialog")
                     .modal-dialog.modal-xl(role="document")
                         .modal-content
@@ -101,7 +101,7 @@ html(lang='en')
 
                             .modal-footer
                                 button.btn.btn-secondary(type="button" data-dismiss="modal") Close
-            if user.class === 'admin'
+            if (user.class === 'admin'  || user.class === 'god')
                 .modal.fade#modalPending(tabindex="-1" role="dialog")
                     .modal-dialog.modal-xl(role="document")
                         .modal-content
@@ -139,6 +139,19 @@ html(lang='en')
 
                             .modal-footer
                                 button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+
+                .modal.fade#modalUserProfile(tabindex="-1" role="dialog")
+                    .modal-dialog.modal-xl(role="document")
+                        .modal-content
+                            .modal-header
+                                h5 个人信息
+                            .modal-body
+                                table.table
+                                    tbody
+
+                            .modal-footer
+                                button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+
                 .modal.fade#modalNewBook(tabindex="-1" role="dialog")
                     .modal-dialog.modal-xl(role="document")
                         .modal-content

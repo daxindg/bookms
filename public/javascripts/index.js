@@ -539,7 +539,7 @@ btnShowUsers.onclick = (e) => {
                     <td>${x.uid}</td>
                     <td>${x.name}</td>
                     <td>${x.email}</td>
-                    <td><span class="badge badge-info">${x.class}</span></td>                    
+                    <td><span class="badge badge-info" onclick="setUserClass(this)">${x.class}</span></td>                    
                 </tr>
                 `));
             }
@@ -547,6 +547,67 @@ btnShowUsers.onclick = (e) => {
     })
 }
 
+function setUserClass(ele) {
+    let newClass = prompt(`class in 'admin', 'user'`, 'user');
+    if (newClass === null) return;
+    fetch(`/api/user/setclass/${ele.parentNode.parentNode.firstElementChild.innerText}/${newClass}`, {
+        method:'POST'
+    })
+    .then(res => res.json())
+    .then( res => {
+        if (res.ok) {
+            ele.innerText = newClass;
+        }
+        else console.log(JSON.stringify(res.err || res.msg));
+    })
+    .catch( err => console.log(err));
+}
+
+const btnShowUserProfile = document.getElementById('btnShowUserProfile') || {};
+
+btnShowUserProfile.onclick = (e) => {
+    fetch('/api/user', {
+        method: 'GET'
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.ok) {
+            let userProfileModalBody = document.querySelector('#modalUserProfile table');
+            while (userProfileModalBody.firstChild) {
+                userProfileModalBody.lastChild.remove();
+            }
+            userProfileModalBody.appendChild(
+                htmlToElement(
+                `
+                <tbody>
+                <tr>
+                    <td>用户编号</td>
+                    <td>${res.data.uid}</td>
+                </tr>
+                <tr>
+                    <td>用户名</td>
+                    <td>${res.data.name}</td>
+                </tr>
+                <tr>
+                    <td>借阅数</td>
+                    <td>${res.data.count}</td>
+                </tr>
+                <tr>
+                    <td>邮箱</td>
+                    <td>${res.data.email}</td>
+                </tr>
+                <tr>
+                    <td>权限</td>
+                    <td><span class="badge badge-info">${res.data.class}</span></td>
+                </tr>
+                </tbody>
+                `
+                )
+            );
+        }
+    })
+    
+}
 
 
 function htmlToElement(html) {
