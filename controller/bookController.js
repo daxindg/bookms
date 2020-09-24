@@ -34,19 +34,31 @@ exports.list = (req, res) => {
                         
                         var query_conditions = "";
                         var tags = [];
+                        var auths = [];
                         var order = "";
                         for (let [k, v] of Object.entries(query)) {
                             if (k.includes('tag_')) {
                                 tags.push(k.split('_')[1]);
                             }
+                            else if (k.includes('auth_')) {
+                                auths.push(k.split('_')[1]);
+                            }
                             else if (k.includes('s_text') && v !== '') {
-                                console.log('s_Text', v);
+                                // console.log('s_Text', v);
                                 order = `ORDER BY similarity(title, '${v}') DESC`;
                             }
                         }
 
                         if (tags.length > 0) {
                             query_conditions = `WHERE bid IN (SELECT bid FROM book_tags WHERE tid IN (${tags.join(',')}))`;
+                            
+                        }
+
+                        if (auths.length > 0 && query_conditions !== "") {
+                            query_conditions += `AND bid IN (SELECT bid FROM book_author WHERE aid IN (${auths.join(',')}))`;
+                        }
+                        else if (auths.length > 0) {
+                            query_conditions = `WHERE bid IN (SELECT bid FROM book_author WHERE aid IN (${auths.join(',')}))`;
                         }
 
                         req.session.dbconn.any(`SELECT bid,isbn,rem, year, page, title, intro, encode(cover, 'base64') cover FROM book ${query_conditions} ${order} OFFSET ${(now - 1) * 18} ROWS FETCH NEXT 18 ROWS ONLY `).then(data => {
