@@ -420,7 +420,7 @@ document.getElementById('formSearch').onsubmit = (e) => {
     for (let x of boxSelectedAuthors_f.childNodes) {
         inputGroupAuthors.appendChild(htmlToElement(
             `
-            <input type="checkbox" name="${x.id}" checked>
+            <input type="checkbox" name="${x.id}" checked style="display:none;">
             `
         ));
     }
@@ -468,8 +468,8 @@ inputSearchAuthor.oninput = inputSearchAuthor_f.oninput = (e) => {
 
 btnAddAuthor.onclick = btnAddAuthor_f.onclick = (e) => {
     let wtf = e.currentTarget.parentNode.parentNode;
-    console.log(wtf);
-    console.log(wtf.nextSibling);
+    // console.log(wtf);
+    // console.log(wtf.nextSibling);
     let res = e.currentTarget.parentNode.parentNode.nextSibling.childNodes;
     let now = e.currentTarget.parentNode.previousSibling.value;
     
