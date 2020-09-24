@@ -85,7 +85,7 @@ exports.list = (req, res) => {
             }
         },
         (err, data) => {
-            res.render('index', {title:'Book List', data:data.books, tags:data.tags, user:req.session.user});
+            res.render('index', {title:'BoOkMs', data:data.books, tags:data.tags, user:req.session.user});
         }
     );
 };
