@@ -31,6 +31,8 @@ for (var i = 0; i < tags.length; i++) {
     }
 }
 
+// edit book
+
 for (var i = 0; i < enchkbox.length; i++) {
     enchkbox[i].addEventListener('click', (e) => {
         var x = e.currentTarget.parentNode.previousSibling;
@@ -63,6 +65,33 @@ for (var i = 0; i < enchkbox.length; i++) {
         }
     });
 }
+
+const formCover = document.getElementsByClassName('formCover') || {};
+for (let x of formCover) {
+    // console.log(x);
+    x.onsubmit = (e) => {
+        
+        e.preventDefault();
+        let data = new FormData(x);
+        fetch(`/api/book/${x.id.split('_')[1]}/setcover`, {
+            method: 'POST',
+            body:data
+        })
+        .then( res => res.json())
+        .then( res => {
+            if (res.ok) {
+                alert('Successful');
+                window.location.replace('/');
+            }
+            else alert('Failed');
+        })
+        .catch( err => {
+            console.log(err);
+            alert(`Filed : ${JSON.stringify(err)}`);
+        })
+    }
+}
+
 
 for (var i = 0; i < book_tags_container.length; i++) {
     var d = book_tags_container[i];
@@ -161,10 +190,7 @@ function add_tag_to_book(ele) {
     ).catch(err => console.log(err));
 }
 
-btn_apply.onclick = function() {
-    var tags = document.querySelectorAll('.tag input');
-    console.log(tags);
-};
+
 
 newtagForm.addEventListener('submit', (e) => {
 

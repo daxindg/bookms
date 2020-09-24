@@ -73,6 +73,13 @@ block content
                                                     img(src=book.cover alt="...")
                                                 else
                                                     img(src="/images/default_cover.png" alt="default cover")
+                                                if user && (user.class === 'admin' || user.class === 'god')
+                                                    form.formCover(id='formCover_'+book.bid)
+                                                        .input-group.mb-3
+                                                            
+                                                            input(type="file" name="cover" accept="image/png;image/jpg")
+                                                            .input-group-append
+                                                                input(type="submit" value="update").input-group-text
                                             .main-tag
                                         .main-info.col-12.col-sm-6.col-xl-9
                                             .card.card-body

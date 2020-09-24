@@ -138,6 +138,21 @@ router.post('/book/new', isAdmin, [
     }
 ]);
 
+router.post('/book/:bid/setcover', isAdmin, (req, res) => {
+    if (req.files && req.files.cover) {
+        console.log(req.files);
+        req.session.dbconn.none('UPDATE book SET cover = $1 WHERE bid = $2', [req.files.cover.data, req.params.bid])
+        .then(() =>res.send({ok:true}))
+        .catch( err => {
+            console.log(err);
+            res.send({ok:false, err:err});
+        } );
+    }
+    else {
+        res.send({ok:false, msg:'file upload failed'});
+    }
+})
+
 router.post('/book/:bid/set', isAdmin, [
     body('title', '书名不可为空').optional().isLength({ min: 1 }).trim().escape(),
     body('isbn', 'ISBN 为空或不合法').optional().isISBN().trim().escape().customSanitizer(value => value.split('-').join('')),
@@ -173,7 +188,7 @@ router.post('/book/del/:bid/', isAdmin, (req, res) => {
 
 router.post('/author/new/:name/', isAdmin,[
     (req, res) => {
-        req.session.dbconn.one('INSERT INTO author VALUES(default, $1, 0) RETURNING aid, name', req.params.name)
+        req.session.dbconn.one('INSERT INTO author VALUES(default, $1, 0) RETURNING aid, name', req.params.name.trim())
         .then(
             data => {
                 res.send({ok: true, data:data});

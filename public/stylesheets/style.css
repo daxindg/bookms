@@ -52,7 +52,7 @@ button.tag.active {
 }
 
 .main-cover {
-    display: flex;
+    display: block;
 }
 
 .main-cover img {
