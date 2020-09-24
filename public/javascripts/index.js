@@ -243,6 +243,7 @@ for (var i = 0; i < btnBorrow.length; i++) {
 // borrow list ?
 
 const btnShowBorrow = document.getElementById('btnShowBorrow');
+if (btnShowBorrow) {
 btnShowBorrow.onclick = (e) => {
     fetch('api/borrow/list', {
         method: 'GET'
@@ -294,11 +295,11 @@ btnShowBorrow.onclick = (e) => {
     })
     .catch( err => console.log(err));
 }
-
+}
 
 //  pending list
 
-const btnShowPending = document.getElementById('btnShowPending');
+const btnShowPending = document.getElementById('btnShowPending') || {};
 
 btnShowPending.onclick = (e) => {
     fetch('/api/borrow/pending', {
@@ -353,7 +354,8 @@ btnShowPending.onclick = (e) => {
 
 // new book
 
-const formNewBook = document.getElementById('formNewBook');
+const formNewBook = document.getElementById('formNewBook') || {};
+
 
 formNewBook.onsubmit = (e) => {
     e.preventDefault();
@@ -402,17 +404,17 @@ formNewBook.onsubmit = (e) => {
 
 // author
 
-const inputSearchAuthor = document.getElementById('inputSearchAuthor');
-const btnAddAuthor = document.getElementById('btnAddAuthor');
-const dropdownAuthorHint = document.getElementById('dropdownAuthorHint');
-const boxSelectedAuthors = document.getElementById('selectedAuthors');
+const inputSearchAuthor = document.getElementById('inputSearchAuthor') || {};
+const btnAddAuthor = document.getElementById('btnAddAuthor') || {};
+const dropdownAuthorHint = document.getElementById('dropdownAuthorHint') || {};
+const boxSelectedAuthors = document.getElementById('selectedAuthors') || {};
 
-const inputSearchAuthor_f = document.getElementById('inputSearchAuthor_f');
-const btnAddAuthor_f = document.getElementById('btnAddAuthor_f');
-const dropdownAuthorHint_f = document.getElementById('dropdownAuthorHint_f');
-const boxSelectedAuthors_f = document.getElementById('selectedAuthors_f');
+const inputSearchAuthor_f = document.getElementById('inputSearchAuthor_f') || {};
+const btnAddAuthor_f = document.getElementById('btnAddAuthor_f') || {};
+const dropdownAuthorHint_f = document.getElementById('dropdownAuthorHint_f') || {};
+const boxSelectedAuthors_f = document.getElementById('selectedAuthors_f') || {};
 
-const inputGroupAuthors = document.getElementById('inputGroupAuthors');
+const inputGroupAuthors = document.getElementById('inputGroupAuthors') || {};
 document.getElementById('formSearch').onsubmit = (e) => {
     while (inputGroupAuthors.firstChild) {
         inputGroupAuthors.lastChild.remove();
@@ -427,7 +429,7 @@ document.getElementById('formSearch').onsubmit = (e) => {
 };
 
 inputSearchAuthor.onfocus = inputSearchAuthor_f.onfocus = (e) => {
-    // console.log(e, dropdownnAuthorHint);
+    console.log(e.target.parentNode.nextSibling);
     e.target.parentNode.nextSibling.style.display = 'block';
 };
 inputSearchAuthor.onfocusout = inputSearchAuthor_f.onfocusout = (e) => {
@@ -518,7 +520,7 @@ btnAddAuthor.onclick = btnAddAuthor_f.onclick = (e) => {
 
 
 // users list
-const btnShowUsers = document.getElementById('btnShowUsers');
+const btnShowUsers = document.getElementById('btnShowUsers') || {};
 
 btnShowUsers.onclick = (e) => {
     fetch('/api/user/list', {
