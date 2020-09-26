@@ -45,7 +45,7 @@ exports.list = (req, res) => {
                             }
                             else if (k.includes('s_text') && v !== '') {
                                 // console.log('s_Text', v);
-                                order = `ORDER BY similarity(title, '${v}') DESC`;
+                                order = `similarity(title, '${v}') DESC, `;
                             }
                         }
 
@@ -61,7 +61,7 @@ exports.list = (req, res) => {
                             query_conditions = `WHERE bid IN (SELECT bid FROM book_author WHERE aid IN (${auths.join(',')}))`;
                         }
 
-                        req.session.dbconn.any(`SELECT bid,isbn,rem, year, page, title, intro, encode(cover, 'base64') cover FROM book ${query_conditions} ${order} OFFSET ${(now - 1) * 18} ROWS FETCH NEXT 18 ROWS ONLY `).then(data => {
+                        req.session.dbconn.any(`SELECT bid,isbn,rem, year, page, title, intro, encode(cover, 'base64') cover FROM book ${query_conditions} ORDER BY ${order} bid DESC OFFSET ${(now - 1) * 18} ROWS FETCH NEXT 18 ROWS ONLY `).then(data => {
                             data = data.map(e=>{
                                 if (e.cover) e.cover = 'data:image/png;base64,'+e.cover;
                                 return e;
