@@ -181,22 +181,20 @@ router.post('/book/new', isAdmin, [
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            console.log('wtf', errors.array());
             return res.send({ ok: false, err: errors.array() });
         }
 
         var book = req.body;
-        console.log(req.body);
-
         var cover = null;
-        console.log(req.files);
 
         if (req.files) {
             cover = req.files.cover.data;
         }
 
-        var langroup = ISBN.parse(book.isbn).groupname.split(',')[0];
+        var langroup = ISBN.parse(book.isbn).groupname.split(' ')[0].split(',')[0];
 
-        // console.log(langroup);
+
         var authors = JSON.parse(book.authors);
         var tags = JSON.parse(book.tags);
         req.session.dbconn.tx(async t => {
