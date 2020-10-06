@@ -232,8 +232,8 @@ router.get('/book/:bid/cover', (req, res) => {
 router.post('/book/:bid/setcover', isAdmin, (req, res) => {
     if (req.files && req.files.cover) {
         console.log(req.files);
-        req.session.dbconn.none('UPDATE books SET cover = $1 WHERE bid = $2', [req.files.cover.data, req.params.bid])
-            .then(() => res.send({ ok: true }))
+        req.session.dbconn.one(`UPDATE books SET cover = $1 WHERE bid = $2 RETURNING 'data:image/png;base64,' || encode(cover, 'base64') cover`, [req.files.cover.data, req.params.bid])
+            .then(data => res.send({ ok: true, data:data }))
             .catch(err => {
                 console.log(err);
                 res.send({ ok: false, err: err });
