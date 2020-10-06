@@ -156,7 +156,8 @@ router.get('/book/list', (req, res) => {
             }
         }
 
-        var books = await t.any(`SELECT bid, isbn, total, rem, year, page, title, intro, 'data:image/png;base64,' || encode(cover, 'base64') cover FROM books ${query_conditions} ORDER BY ${order} bid DESC OFFSET ${(now - 1) * 18} ROWS FETCH NEXT 18 ROWS ONLY `);
+        // var books = await t.any(`SELECT bid, isbn, total, rem, year, page, title, intro, 'data:image/png;base64,' || encode(cover, 'base64') cover FROM books ${query_conditions} ORDER BY ${order} bid DESC OFFSET ${(now - 1) * 18} ROWS FETCH NEXT 18 ROWS ONLY `);
+        var books = await t.any(`SELECT bid,pub, isbn, total, rem, year, page, title, intro FROM books ${query_conditions} ORDER BY ${order} bid DESC OFFSET ${(now - 1) * 18} ROWS FETCH NEXT 18 ROWS ONLY `);
 
         return { books, count };
     })
@@ -219,6 +220,15 @@ router.post('/book/new', isAdmin, [
     }
 ]);
 
+router.get('/book/:bid/cover', (req, res) => {
+    req.session.dbconn.one(`SELECT 'data:image/png;base64,' || encode(cover, 'base64') cover FROM books WHERE bid = $1`, [req.params.bid])
+        .then(data => res.send({ ok: true, data: data }))
+        .catch(err => {
+            console.log(err);
+            res.send({ ok: false, err: err });
+        });
+});
+
 router.post('/book/:bid/setcover', isAdmin, (req, res) => {
     if (req.files && req.files.cover) {
         console.log(req.files);
@@ -232,7 +242,7 @@ router.post('/book/:bid/setcover', isAdmin, (req, res) => {
     else {
         res.send({ ok: false, msg: 'file upload failed' });
     }
-})
+});
 
 router.post('/book/:bid/set', isAdmin, [
     body('title', '书名不可为空').optional().isLength({ min: 1 }).trim().escape(),
