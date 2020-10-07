@@ -41,25 +41,25 @@ CREATE TABLE users (
     email text UNIQUE NOT NULL,
     name varchar(20) UNIQUE NOT NULL,
     psw text NOT NULL,
-    class text NOT NULL CHECK(class IN ('admin', 'user', 'guest', 'banned', 'god'))
+    class text NOT NULL CHECK(class IN ('admin', 'user', 'guest'))
 );
 
 CREATE TABLE book_author (
-    bid int REFERENCES book ON DELETE CASCADE,
-    aid int REFERENCES author,
+    bid int REFERENCES books ON DELETE CASCADE,
+    aid int REFERENCES authors,
     PRIMARY KEY (bid, aid)
 );
 
 CREATE TABLE book_tag (
-    bid int REFERENCES book ON DELETE CASCADE,
-    tid int REFERENCES tag,
+    bid int REFERENCES books ON DELETE CASCADE,
+    tid int REFERENCES tags,
     PRIMARY KEY (bid, tid)
 );
 
-CREATE TABLE _borrow (
+CREATE TABLE borrow (
     brid serial PRIMARY KEY,
     uid int NOT NULL REFERENCES users,
-    bid int NOT NULL REFERENCES book,
+    bid int NOT NULL REFERENCES books,
     stime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ddl timestamp DEFAULT CURRENT_TIMESTAMP + '7D'::interval,
     status text CHECK(status IN ('ok', 'pending_borrow', 'pending_return', 'overtime', 'returned'))
