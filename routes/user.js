@@ -18,27 +18,27 @@ router.post('/login', [
             req.session.dbconn.one('SELECT * FROM users WHERE name = $1', [req.body.username])
                 .then(
                     data => {
-                        console.log(data);
+                        // console.log(data);
                         if (bcrypt.compareSync(req.body.password, data.psw)) {
                             console.log('ok');
                             req.session.user = data;
                             delete req.session.user.psw;
-                            console.log(req.session.user);
+                            // console.log(req.session.user);
                             res.send({ ok: true, data: req.session.user });
                         }
                         else {
-                            res.send({ ok: false, err: { key: password, msg: '密码错误' } });
+                            res.send({ ok: false, err: { key: 'password', msg: '密码错误' } });
                         }
 
                     }
                 )
                 .catch(err => {
-                    console.log('/router/user.js:31', err);
-                    res.send({ ok: false, err: { key: username, msg: '用户不存在' } });
+                    // console.log('/router/user.js:31', err);
+                    res.send({ ok: false, err: { key: 'username', msg: '用户不存在' } });
                 })
         }
         else {
-            console.log(errors.array());
+            // console.log(errors.array());
             res.send({ ok: false, err: errors.array() });
         }
 
@@ -80,7 +80,7 @@ router.post('/register', [
                 }
                 )
                 .catch(err => {
-                    console.log(err);
+                    // console.log(err);
                     res.send({ ok: false, err: err });
                 });
 
