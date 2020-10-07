@@ -9,26 +9,26 @@ const ISBN = require('isbn3');
 // -----------------borrow--------------------
 
 router.get('/borrow/list', isLogined, (req, res) => {
-    req.session.dbconn.any(`SELECT brid, title, borrow.bid bid, to_char(stime,'YY-MM-DD HH24:MI:SS') stime, to_char(ddl,'YY-MM-DD HH24:MI:SS') ddl, status FROM borrow, books WHERE borrow.bid = books.bid AND uid = $1 ORDER BY ddl DESC`, req.session.user.uid)
+    req.session.dbconn.any(`SELECT brid, title, borrow.bid bid, to_char(stime,'YY-MM-DD HH24:MI:SS') stime, to_char(ddl,'YY-MM-DD HH24:MI:SS') ddl, status FROM _borrow() as borrow, books WHERE borrow.bid = books.bid AND uid = $1 ORDER BY ddl DESC`, req.session.user.uid)
         .then(data => {
             res.send({ ok: true, data: data });
         })
         .catch(err => {
             console.log(err);
-            res.send({ ok: false, err: err, msg: 'Failed' });
+            res.send({ ok: false, err: err});
         })
 });
 
 router.get('/borrow/pending', isAdmin, (req, res) => {
     // console.log('brpd');
-    req.session.dbconn.any(`SELECT name username, brid, title, borrow.bid bid, to_char(stime,'YY-MM-DD HH24:MI:SS') stime, to_char(ddl,'YY-MM-DD HH24:MI:SS') ddl, status FROM borrow, books, users WHERE status LIKE 'pending%' AND users.uid = borrow.uid AND borrow.bid = books.bid ORDER BY ddl DESC`)
+    req.session.dbconn.any(`SELECT name username, brid, title, borrow.bid bid, to_char(stime,'YY-MM-DD HH24:MI:SS') stime, to_char(ddl,'YY-MM-DD HH24:MI:SS') ddl, status FROM _borrow() as borrow, books, users WHERE status LIKE 'pending%' AND users.uid = borrow.uid AND borrow.bid = books.bid ORDER BY ddl DESC`)
         .then(data => {
             res.send({ ok: true, data: data });
         })
         .catch(
             err => {
                 console.log(err);
-                res.send({ ok: false, err: err, msg: 'an error occured' })
+                res.send({ ok: false, err: err})
             }
         );
 });
@@ -36,7 +36,7 @@ router.get('/borrow/pending', isAdmin, (req, res) => {
 router.post('/borrow/accept/:brid/', isAdmin, (req, res) => {
     req.session.dbconn.tx(async t => {
 
-        var { status, bid } = await t.one('SELECT status, bid FROM borrow WHERE brid = $1', req.params.brid);
+        var { status, bid } = await t.one('SELECT status, bid FROM _borrow() WHERE brid = $1', req.params.brid);
         // console.log(status, bid);
         if (status === 'pending_borrow') {
             await t.none('UPDATE books SET rem = rem - 1 WHERE bid = $1', bid);
@@ -59,7 +59,7 @@ router.post('/borrow/accept/:brid/', isAdmin, (req, res) => {
 router.post('/borrow/reject/:brid/', isAdmin, (req, res) => {
     req.session.dbconn.tx(async t => {
 
-        var { status, bid } = await t.one('SELECT status, bid FROM borrow WHERE brid = $1', req.params.brid);
+        var { status, bid } = await t.one('SELECT status, bid FROM _borrow() WHERE brid = $1', req.params.brid);
         // console.log(status, bid);
         if (status === 'pending_borrow') {
             await t.none(`DELETE FROM borrow WHERE brid = $1`, req.params.brid);
@@ -80,7 +80,7 @@ router.post('/borrow/reject/:brid/', isAdmin, (req, res) => {
 
 router.post('/borrow/:bid/', [notBanned, isLogined, (req, res) => {
 
-    req.session.dbconn.any(`INSERT INTO borrow(uid, bid, stime, ddl, status, brid) VALUES($1, $2, default, null, 'pending_borrow', default) RETURNING *`, [req.session.user.uid, req.params.bid])
+    req.session.dbconn.one(`INSERT INTO borrow(uid, bid, stime, ddl, status, brid) VALUES($1, $2, default, null, 'pending_borrow', default) RETURNING *`, [req.session.user.uid, req.params.bid])
         .then(
             data => {
                 res.send({ ok: true, data: data });
@@ -97,13 +97,13 @@ router.post('/borrow/:bid/', [notBanned, isLogined, (req, res) => {
 router.post('/return/:brid/', isLogined, (req, res) => {
     var bruid = [req.session.user.uid, req.params.brid];
     req.session.dbconn.tx(async t => {
-        var { status } = await t.one('SELECT status FROM borrow WHERE uid=$1 AND brid=$2', bruid);
+        var { status } = await t.one('SELECT status FROM _borrow() WHERE uid=$1 AND brid=$2', bruid);
         console.log(status);
 
         if (status === 'pending_borrow') {
             await t.none('DELETE FROM borrow WHERE uid=$1 AND brid=$2', bruid);
         }
-        else if (status === 'ok') {
+        else if (status === 'ok' || status === 'overtime') {
             var { brid } = await t.one(`UPDATE borrow SET status='pending_return' WHERE uid = $1 AND brid = $2 RETURNING brid`, bruid);
         }
         return { brid };
