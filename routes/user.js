@@ -76,6 +76,8 @@ router.post('/register', [
             const salt = bcrypt.genSaltSync();
             req.session.dbconn.one("INSERT INTO users VALUES(default, $1, $2, $3, 'user') RETURNING *", [req.body.email, req.body.username, bcrypt.hashSync(req.body.password, salt)])
                 .then(data => {
+                    delete data.psw;
+                    req.session.user = data;
                     res.send({ok:true, data:data});
                 }
                 )
