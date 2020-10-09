@@ -468,7 +468,7 @@ router.post('/user/setclass/:uid/:class/', isAdmin, (req, res) => {
     //     return;
     // }
     req.session.dbconn.one(`UPDATE users SET class = $1 WHERE uid = $2 RETURNING class`, [req.params.class, req.params.uid])
-        .then(data => res.send({ ok: false, data: data }))
+        .then(data => res.send({ ok: true, data: data }))
         .catch(err => {
             console.log(err);
             res.send({ ok: false, err: err });
