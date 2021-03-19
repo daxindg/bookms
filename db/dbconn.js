@@ -3,7 +3,7 @@ var pgp = require("pg-promise")();
 if (process.env.PROD) {
   exports.userconn = exports.guestconn = exports.adminconn = pgp({
     connectionString: process.env.DATABASE_URL,
-    ssl: true,
+    ssl: { rejectUnauthorized: false },
   });
 } else {
   exports.adminconn = pgp(process.env.DB_URL_ADMIN);
