@@ -16,7 +16,7 @@ router.get('/borrow/list', isLogined, (req, res) => {
         .catch(err => {
             console.log(err);
             res.send({ ok: false, err: err});
-        })
+        });
 });
 
 router.get('/borrow/pending', isAdmin, (req, res) => {
